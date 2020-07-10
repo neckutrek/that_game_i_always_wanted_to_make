@@ -1,6 +1,12 @@
 #include "core/glad.h"
 #include <GLFW/glfw3.h>
+
+#include "core/shader_types.h"
+#include "core/shader_builder.h"
+
 #include <iostream>
+
+using namespace tg;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 
@@ -37,6 +43,12 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+
+    Shader vertexShader = ShaderBuilder::buildShader("../src/shaders/vertex.glsl", GL_VERTEX_SHADER);
+    Shader fragmentShader = ShaderBuilder::buildShader("../src/shaders/fragment.glsl", GL_FRAGMENT_SHADER);
+    ShaderProgram shaderProgram = ShaderBuilder::linkShaderProgram(vertexShader, fragmentShader);
+    ShaderBuilder::deleteShaders(vertexShader, fragmentShader);
+    glUseProgram(shaderProgram.m_handle);
 
     // Loop until the user closes the window
     while(!glfwWindowShouldClose(window))
