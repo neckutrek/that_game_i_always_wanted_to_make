@@ -5,10 +5,10 @@
    "version": "0.2.0",
    "configurations": [
       {
-         "name": "main",
+         "name": "simple_triangle",
          "type": "cppdbg",
          "request": "launch",
-         "program": "${workspaceFolder}/bin/main",
+         "program": "${workspaceFolder}/bin/simple_triangle",
          "args": [],
          "stopAtEntry": false,
          "cwd": "${workspaceFolder}/bin",

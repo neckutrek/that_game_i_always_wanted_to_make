@@ -1,0 +1,4 @@
+add_executable(simple_triangle simple_triangle.cpp)
+target_include_directories(simple_triangle PUBLIC ${EXTERNAL_INCLUDE_DIR})
+target_include_directories(simple_triangle PUBLIC ${INTERNAL_INCLUDE_DIR})
+target_link_libraries(simple_triangle glfw core)
