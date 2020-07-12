@@ -9,8 +9,7 @@ namespace tg
 
 Shader
 ShaderBuilder::buildShader(
-   const std::string& sourceFilename,
-   GLenum shaderType)
+   const std::string& sourceFilename)
 {
    std::string::size_type st = sourceFilename.find_last_of('.');
    if (st == std::string::npos)
@@ -20,11 +19,15 @@ ShaderBuilder::buildShader(
          "The given filename has no extension.");
    }
 
-   if (sourceFilename.substr(st).compare(".glsl") != 0)
+   std::string extension = sourceFilename.substr(st);
+   bool is_vertex = (extension.compare(".vert") == 0);
+   bool is_fragment = (extension.compare(".frag") == 0);
+   bool is_geometry = (extension.compare(".geom") == 0);
+   if (!is_vertex && !is_fragment && !is_geometry)
    {
       throw Exception(
          "Can't open GLSL source file: '" + sourceFilename + "'. "
-         "The file extension is not '.glsl'.");
+         "The file extension is not one of '.vert', '.frag' or '.geom'.");
    }
 
    std::ifstream ifs(sourceFilename);
@@ -43,7 +46,12 @@ ShaderBuilder::buildShader(
       std::istreambuf_iterator<char>());
 
    Shader shader;
-   shader.m_shaderType = shaderType;
+
+   shader.m_shaderType = 0;
+   if (is_vertex) shader.m_shaderType = GL_VERTEX_SHADER;
+   if (is_fragment) shader.m_shaderType = GL_FRAGMENT_SHADER;
+   if (is_geometry) shader.m_shaderType = GL_GEOMETRY_SHADER;
+
    shader.m_handle = glCreateShader(shader.m_shaderType);
    const char* sourceString = shaderSource.c_str();
    glShaderSource(shader.m_handle, 1, &sourceString, NULL);

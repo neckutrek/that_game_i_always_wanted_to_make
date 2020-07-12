@@ -35,8 +35,7 @@ public:
                               ShaderBuilder&&) = delete;
 
    static   Shader         buildShader(
-                              const std::string& sourceFilename,
-                              GLenum shaderType);
+                              const std::string& sourceFilename);
 
    template <typename ...Shaders>
    static   ShaderProgram  linkShaderProgram(

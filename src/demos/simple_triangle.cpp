@@ -70,8 +70,8 @@ int main()
       return -1;
    }
 
-   Shader vertexShader = ShaderBuilder::buildShader("../src/shaders/vertex.glsl", GL_VERTEX_SHADER);
-   Shader fragmentShader = ShaderBuilder::buildShader("../src/shaders/fragment.glsl", GL_FRAGMENT_SHADER);
+   Shader vertexShader = ShaderBuilder::buildShader("../src/shaders/vertex.vert");
+   Shader fragmentShader = ShaderBuilder::buildShader("../src/shaders/fragment.frag");
    ShaderProgram shaderProgram = ShaderBuilder::linkShaderProgram(vertexShader, fragmentShader);
    ShaderBuilder::deleteShaders(vertexShader, fragmentShader);
    glUseProgram(shaderProgram.m_handle);
