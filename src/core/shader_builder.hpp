@@ -1,4 +1,6 @@
-#include "core/shader_builder.h"
+#define GL_GLEXT_PROTOTYPES
+#include <SDL_opengl.h>
+
 #include "core/shader_types.h"
 #include "core/exception.h"
 

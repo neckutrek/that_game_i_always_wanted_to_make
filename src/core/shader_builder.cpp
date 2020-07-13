@@ -1,6 +1,4 @@
 #include "core/shader_builder.h"
-#include "core/shader_types.h"
-#include "core/exception.h"
 
 #include <fstream>
 

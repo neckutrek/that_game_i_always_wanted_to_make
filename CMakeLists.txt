@@ -6,12 +6,15 @@ set(CMAKE_EXECUTABLE_PATH ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_LIBRARY_PATH ${CMAKE_SOURCE_DIR}/bin)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin)
 
+find_package(sdl2 REQUIRED)
+find_package(OpenGL REQUIRED)
+
+set(THIRD_PARTY_INCLUDE_DIR ${SDL2_INCLUDE_DIRS})
 set(EXTERNAL_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/include)
 set(INTERNAL_INCLUDE_DIR ${PROJECT_SOURCE_DIR}/src)
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wextra -Wpedantic -Wall -O0")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17 -Wextra -Wpedantic -Wall -O0 -g")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-parameter")
 
-find_package(glfw3 3.3 REQUIRED)
 
 add_subdirectory("${PROJECT_SOURCE_DIR}/src")

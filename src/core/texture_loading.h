@@ -1,7 +1,8 @@
 #ifndef __THATGAME_CORE_TEXTURE_LOADING_INCGRD__
 #define __THATGAME_CORE_TEXTURE_LOADING_INCGRD__
 
-#include "core/glad.h"
+#define GL_GLEXT_PROTOTYPES
+#include <SDL_opengl.h>
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "core/stb_image.h"

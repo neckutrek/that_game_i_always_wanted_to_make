@@ -1,5 +1,5 @@
-#include "core/glad.h"
-#include "core/vertex_object.h"
+#define GL_GLEXT_PROTOTYPES
+#include <SDL_opengl.h>
 
 namespace tg
 {

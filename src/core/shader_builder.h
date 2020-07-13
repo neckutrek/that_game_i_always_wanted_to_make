@@ -1,8 +1,6 @@
 #ifndef __THATGAME_CORE_SHADER_BUILDER_INCGRD__
 #define __THATGAME_CORE_SHADER_BUILDER_INCGRD__
 
-#include "core/glad.h"
-
 #include <string>
 
 namespace tg

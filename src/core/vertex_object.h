@@ -1,8 +1,6 @@
 #ifndef __THATGAME_CORE_VERTEX_OBJECT_INCGRD__
 #define __THATGAME_CORE_VERTEX_OBJECT_INCGRD__
 
-#include "core/glad.h"
-
 #include <optional>
 
 namespace tg

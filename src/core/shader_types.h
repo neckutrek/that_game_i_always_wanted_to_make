@@ -1,7 +1,7 @@
 #ifndef __THATGAME_CORE_SHADER_TYPES_INCGRD__
 #define __THATGAME_CORE_SHADER_TYPES_INCGRD__
 
-#include "core/glad.h"
+#include <SDL_opengl.h>
 
 namespace tg
 {

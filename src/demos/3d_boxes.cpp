@@ -1,5 +1,6 @@
-#include "core/glad.h"
-#include <GLFW/glfw3.h>
+#define GL_GLEXT_PROTOTYPES
+#include <SDL.h>
+#include <SDL_opengl.h>
 
 #include "core/shader_types.h"
 #include "core/shader_builder.h"
@@ -14,62 +15,36 @@ using namespace tg;
 static constexpr int SCREEN_WIDTH = 1024;
 static constexpr int SCREEN_HEIGHT = 768;
 
-void framebuffer_size_callback(GLFWwindow* window, int width, int height)
+auto createSdlWindow()
 {
-   glViewport(0, 0, width, height);
-}
+   SDL_Init( SDL_INIT_VIDEO );
+   SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
+   SDL_GL_SetAttribute( SDL_GL_ACCELERATED_VISUAL, 1 );
+   SDL_GL_SetAttribute( SDL_GL_RED_SIZE, 8 );
+   SDL_GL_SetAttribute( SDL_GL_GREEN_SIZE, 8 );
+   SDL_GL_SetAttribute( SDL_GL_BLUE_SIZE, 8 );
+   SDL_GL_SetAttribute( SDL_GL_ALPHA_SIZE, 8 );
 
-void processInput(GLFWwindow* window)
-{
-   if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-   {
-      glfwSetWindowShouldClose(window, true);
-   }
-}
+   SDL_GL_SetAttribute( SDL_GL_CONTEXT_MAJOR_VERSION, 3 );
+   SDL_GL_SetAttribute( SDL_GL_CONTEXT_MINOR_VERSION, 2 );
+   SDL_GL_SetAttribute( SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE );
 
-GLFWwindow* initGlfw()
-{
-   GLFWwindow* window;
+   SDL_Window* window = SDL_CreateWindow(
+      "Simple Triangle",
+      SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED,
+      SCREEN_WIDTH, SCREEN_HEIGHT,
+      SDL_WINDOW_OPENGL | SDL_WINDOW_SHOWN );
 
-   if (!glfwInit())
-   {
-      return nullptr;
-   }
-
-   glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-   glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 1);
-   glfwWindowHint(GLFW_OPENGL_PROFILE,GLFW_OPENGL_CORE_PROFILE);
-   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-
-#ifdef __APPLE__
-   glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-
-   window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "3D Boxes", NULL, NULL);
-   if (!window)
-   {
-      std::cerr << "Failed to create GLFW window" << std::endl;
-      glfwTerminate();
-      return nullptr;
-   }
-
-   glfwMakeContextCurrent(window);
-   glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-
-   if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-   {
-      std::cerr << "Failed to initialize GLAD" << std::endl;
-      return nullptr;
-   }
+   SDL_GLContext context = SDL_GL_CreateContext( window );
 
    glEnable(GL_DEPTH_TEST);
 
-   return window;
+   return std::make_tuple(window, context);
 }
 
 int main()
 {
-   GLFWwindow* window = initGlfw();
+   auto [window, context] = createSdlWindow();
    if (!window)
    {
       return -1;
@@ -147,33 +122,63 @@ int main()
       glGetUniformLocation(shaderProgram.m_handle, "view"),
       1, GL_FALSE, cameraObject.mtx00());
 
+   glm::vec3 cubePositions[] = {
+      glm::vec3( 0.0f,  0.0f,  0.0f),
+      glm::vec3( 2.0f,  5.0f, -15.0f),
+      glm::vec3(-1.5f, -2.2f, -2.5f),
+      glm::vec3(-3.8f, -2.0f, -12.3f),
+      glm::vec3( 2.4f, -0.4f, -3.5f),
+      glm::vec3(-1.7f,  3.0f, -7.5f),
+      glm::vec3( 1.3f, -2.0f, -2.5f),
+      glm::vec3( 1.5f,  2.0f, -2.5f),
+      glm::vec3( 1.5f,  0.2f, -1.5f),
+      glm::vec3(-1.3f,  1.0f, -1.5f)
+    };
+
    Object3D boxObject;
-   boxObject.translate({0.1f, 0.2f, 0.3f});
-   float angle = 45.0f;
+   float rotSpeed = 0.10f;
    glm::vec3 rotAxis = {1.0f, 1.0f, 1.0f};
-   boxObject.rotate(glm::radians(angle), rotAxis);
 
-   glUniformMatrix4fv(
-      glGetUniformLocation(shaderProgram.m_handle, "model"),
-      1, GL_FALSE, boxObject.mtx00());
-
-   while(!glfwWindowShouldClose(window))
+   bool run = true;
+   while(run)
    {
-      processInput(window);
+      SDL_Event event;
+      while( SDL_PollEvent( &event ) )
+      {
+         switch( event.type )
+         {
+         case SDL_KEYUP:
+            if( event.key.keysym.sym == SDLK_ESCAPE )
+               run = false;
+            break;
+         }
+      }
 
       glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      boxModel1.bind();
-      boxModel1.draw();
+      for (const auto& pos : cubePositions)
+      {
+         boxObject.setPosition(pos);
+         boxObject.rotate(glm::radians(rotSpeed), rotAxis);
+         glUniformMatrix4fv(
+            glGetUniformLocation(shaderProgram.m_handle, "model"),
+            1, GL_FALSE, boxObject.mtx00());
 
-      glfwSwapBuffers(window);
-      glfwPollEvents();
+         boxModel1.bind();
+         boxModel1.draw();
+      }
+
+      SDL_GL_SwapWindow( window );
+      SDL_Delay( 1 );
    }
 
    glDeleteTextures(1, &texture1);
    glDeleteProgram(shaderProgram.m_handle);
 
-   glfwTerminate();
+   SDL_GL_DeleteContext( context );
+   SDL_DestroyWindow( window );
+   SDL_Quit();
+   
    return 0;
 }
