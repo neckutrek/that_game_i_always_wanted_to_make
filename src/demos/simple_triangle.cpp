@@ -3,6 +3,7 @@
 
 #include "core/shader_types.h"
 #include "core/shader_builder.h"
+#include "core/vertex_object.h"
 
 #include <iostream>
 
@@ -80,21 +81,11 @@ int main()
         -0.5f, -0.5f, 0.0f,
          0.5f, -0.5f, 0.0f,
          0.0f,  0.5f, 0.0f
-    };
+   };
 
-    unsigned int VBO, VAO;
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-    // bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-    glBindVertexArray(VAO);
-
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
+   VertexObject triangle;
+   triangle.setVertices(vertices, 3);
+   triangle.bind();
 
    while(!glfwWindowShouldClose(window))
    {
@@ -103,14 +94,12 @@ int main()
       glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT);
 
-      glDrawArrays(GL_TRIANGLES, 0, 3);
+      triangle.draw();
 
       glfwSwapBuffers(window);
       glfwPollEvents();
    }
 
-   glDeleteVertexArrays(1, &VAO);
-   glDeleteBuffers(1, &VBO);
    glDeleteProgram(shaderProgram.m_handle);
 
    glfwTerminate();
