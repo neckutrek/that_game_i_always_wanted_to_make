@@ -8,28 +8,43 @@
 namespace tg
 {
 
-template <int VertexDim = 3>
+template <int VertexDim1 = 3, int... VertexDims>
 class VertexObject
 {
             std::optional<unsigned int>   m_vao;
             std::optional<unsigned int>   m_vbo;
+            std::optional<unsigned int>   m_ebo;
 
             size_t         m_num_vertices;
+            size_t         m_num_elements;
+
+   static constexpr size_t m_vertex_size = (VertexDim1 + ... + VertexDims);
 
 public:
                            VertexObject();
+
                            ~VertexObject();
+
                            VertexObject(const VertexObject&) = delete;
                            VertexObject(VertexObject&&) = delete;
                            VertexObject& operator=(const VertexObject&) = delete;
                            VertexObject& operator=(VertexObject&&) = delete;
 
-            void           setVertices(float* m_vertices, size_t n);
+   ///
+   /// @param m should be the number of elements in the @elements array DIVIDED BY 3!
+   ///
+            void           set(
+                              float* vertices,
+                              size_t n,
+                              unsigned int* elements = nullptr,
+                              size_t m = 0);
 
             void           bind() const;
 
             void           draw() const;
 
+private:
+            void           destroyBuffers();
 };
 
 } // namespace tg

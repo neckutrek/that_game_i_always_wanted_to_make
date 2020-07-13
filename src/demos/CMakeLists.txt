@@ -1,5 +1,6 @@
 set(TARGETS
-   simple_triangle)
+   simple_triangle
+   3d_boxes)
 
 set(LIBRARIES
    glfw core)

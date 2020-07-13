@@ -4,6 +4,7 @@
 #include "core/shader_types.h"
 #include "core/shader_builder.h"
 #include "core/vertex_object.h"
+#include "core/texture_loading.h"
 
 #include <iostream>
 
@@ -43,7 +44,7 @@ GLFWwindow* initGlfw()
    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif
 
-   window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "Hello World", NULL, NULL);
+   window = glfwCreateWindow(SCREEN_WIDTH, SCREEN_HEIGHT, "3D Boxes", NULL, NULL);
    if (!window)
    {
       std::cerr << "Failed to create GLFW window" << std::endl;
@@ -71,21 +72,31 @@ int main()
       return -1;
    }
 
-   Shader vertexShader = ShaderBuilder::buildShader("../src/shaders/vertex.vert");
-   Shader fragmentShader = ShaderBuilder::buildShader("../src/shaders/fragment.frag");
+   Shader vertexShader = ShaderBuilder::buildShader("../src/shaders/pos_col_tex.vert");
+   Shader fragmentShader = ShaderBuilder::buildShader("../src/shaders/tex.frag");
    ShaderProgram shaderProgram = ShaderBuilder::linkShaderProgram(vertexShader, fragmentShader);
    ShaderBuilder::deleteShaders(vertexShader, fragmentShader);
    glUseProgram(shaderProgram.m_handle);
 
    float vertices[] = {
-        -0.5f, -0.5f, 0.0f,
-         0.5f, -0.5f, 0.0f,
-         0.0f,  0.5f, 0.0f
+      // positions          // colors           // texture coords
+       0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
+       0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
+      -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
+      -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left
    };
 
-   VertexObject triangle;
-   triangle.set(vertices, 3);
-   triangle.bind();
+   unsigned int indices[] = {
+      0, 1, 3,
+      1, 2, 3
+   };
+
+   VertexObject<3,3,2> box_side;
+   box_side.set(vertices, 4, indices, 2);
+   box_side.bind();
+
+   unsigned int texture1 = loadTexture("../assets/container.jpg");
+   glBindTexture(GL_TEXTURE_2D, texture1);
 
    while(!glfwWindowShouldClose(window))
    {
@@ -94,12 +105,13 @@ int main()
       glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
       glClear(GL_COLOR_BUFFER_BIT);
 
-      triangle.draw();
+      box_side.draw();
 
       glfwSwapBuffers(window);
       glfwPollEvents();
    }
 
+   glDeleteTextures(1, &texture1);
    glDeleteProgram(shaderProgram.m_handle);
 
    glfwTerminate();

@@ -21,6 +21,24 @@
            "MIMode": "gdb",
            "miDebuggerPath": "/usr/bin/gdb"
          }
+      },
+      {
+         "name": "3d_boxes",
+         "type": "cppdbg",
+         "request": "launch",
+         "program": "${workspaceFolder}/bin/3d_boxes",
+         "args": [],
+         "stopAtEntry": false,
+         "cwd": "${workspaceFolder}/bin",
+         "environment": [],
+         "externalConsole": false,
+         "osx": {
+           "MIMode": "lldb",
+         },
+         "linux": {
+           "MIMode": "gdb",
+           "miDebuggerPath": "/usr/bin/gdb"
+         }
       }
    ]
 }
