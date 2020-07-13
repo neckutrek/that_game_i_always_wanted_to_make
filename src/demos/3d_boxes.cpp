@@ -5,6 +5,7 @@
 #include "core/shader_builder.h"
 #include "core/vertex_object.h"
 #include "core/texture_loading.h"
+#include "core/object3d.h"
 
 #include <iostream>
 
@@ -61,6 +62,8 @@ GLFWwindow* initGlfw()
       return nullptr;
    }
 
+   glEnable(GL_DEPTH_TEST);
+
    return window;
 }
 
@@ -77,35 +80,92 @@ int main()
    ShaderProgram shaderProgram = ShaderBuilder::linkShaderProgram(vertexShader, fragmentShader);
    ShaderBuilder::deleteShaders(vertexShader, fragmentShader);
    glUseProgram(shaderProgram.m_handle);
+   glUniform1i(glGetUniformLocation(shaderProgram.m_handle, "ourTexture"), 0);
+
+   unsigned int texture1 = loadTexture("../assets/container.jpg");
+   glActiveTexture(GL_TEXTURE0);
+   glBindTexture(GL_TEXTURE_2D, texture1);
 
    float vertices[] = {
       // positions          // colors           // texture coords
-       0.5f,  0.5f, 0.0f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f, // top right
-       0.5f, -0.5f, 0.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f, // bottom right
-      -0.5f, -0.5f, 0.0f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f, // bottom left
-      -0.5f,  0.5f, 0.0f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f  // top left
+      // lid 1
+       0.5f,  0.5f, -0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+       0.5f, -0.5f, -0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+      -0.5f, -0.5f, -0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
+      -0.5f,  0.5f, -0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,
+
+      // lid2
+       0.5f, -0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+       0.5f, -0.5f, -0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+      -0.5f, -0.5f, -0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
+      -0.5f, -0.5f,  0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,
+
+      // etc.
+      -0.5f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+      -0.5f,  0.5f, -0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+      -0.5f, -0.5f, -0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
+      -0.5f, -0.5f,  0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,
+
+       0.5f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+       0.5f, -0.5f,  0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+      -0.5f, -0.5f,  0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
+      -0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,
+
+       0.5f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+       0.5f,  0.5f, -0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+      -0.5f,  0.5f, -0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
+      -0.5f,  0.5f,  0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f,
+
+       0.5f,  0.5f,  0.5f,   1.0f, 0.0f, 0.0f,   1.0f, 1.0f,
+       0.5f,  0.5f, -0.5f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+       0.5f, -0.5f, -0.5f,   0.0f, 0.0f, 1.0f,   0.0f, 0.0f,
+       0.5f, -0.5f,  0.5f,   1.0f, 1.0f, 0.0f,   0.0f, 1.0f
    };
 
    unsigned int indices[] = {
-      0, 1, 3,
-      1, 2, 3
+   // triangle 1        triangle 2
+       0,  1,  3,        1,  2,  3, // lid 1
+       4,  5,  7,        5,  6,  7, // lid 2
+       8,  9, 11,        9, 10, 11, // etc.
+      12, 13, 15,       13, 14, 15,
+      16, 17, 19,       17, 18, 19,
+      20, 21, 23,       21, 22, 23
    };
 
-   VertexObject<3,3,2> box_side;
-   box_side.set(vertices, 4, indices, 2);
-   box_side.bind();
+   VertexObject<3,3,2> boxModel1;
+   boxModel1.set(vertices, 4*6, indices, 2*6);
 
-   unsigned int texture1 = loadTexture("../assets/container.jpg");
-   glBindTexture(GL_TEXTURE_2D, texture1);
+   glm::mat4 projection = glm::mat4(1.0f);
+   projection = glm::perspective(glm::radians(45.0f), (float)SCREEN_WIDTH / (float)SCREEN_HEIGHT, 0.1f, 100.0f);
+   glUniformMatrix4fv(
+      glGetUniformLocation(shaderProgram.m_handle, "projection"),
+      1, GL_FALSE, &projection[0][0]);
+
+   Object3D cameraObject;
+   cameraObject.translate( {0.0f, 0.0f, -3.0f} );
+   glUniformMatrix4fv(
+      glGetUniformLocation(shaderProgram.m_handle, "view"),
+      1, GL_FALSE, cameraObject.mtx00());
+
+   Object3D boxObject;
+   boxObject.translate({0.1f, 0.2f, 0.3f});
+   float angle = 45.0f;
+   glm::vec3 rotAxis = {1.0f, 1.0f, 1.0f};
+   boxObject.rotate(glm::radians(angle), rotAxis);
+
+   glUniformMatrix4fv(
+      glGetUniformLocation(shaderProgram.m_handle, "model"),
+      1, GL_FALSE, boxObject.mtx00());
 
    while(!glfwWindowShouldClose(window))
    {
       processInput(window);
 
       glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
-      glClear(GL_COLOR_BUFFER_BIT);
+      glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-      box_side.draw();
+      boxModel1.bind();
+      boxModel1.draw();
 
       glfwSwapBuffers(window);
       glfwPollEvents();
