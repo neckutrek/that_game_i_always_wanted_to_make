@@ -47,6 +47,6 @@ private:
 
 } // namespace tg
 
-#include "core/vertex_object.hpp"
+#include "gfx/vertex_object.hpp"
 
 #endif

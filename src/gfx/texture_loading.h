@@ -5,7 +5,7 @@
 #include <SDL_opengl.h>
 
 #define STB_IMAGE_IMPLEMENTATION
-#include "core/stb_image.h"
+#include "gfx/stb_image.h"
 
 #include <string>
 

@@ -2,9 +2,9 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
-#include "core/shader_types.h"
-#include "core/shader_builder.h"
-#include "core/vertex_object.h"
+#include "gfx/shader_types.h"
+#include "gfx/shader_builder.h"
+#include "gfx/vertex_object.h"
 
 #include <iostream>
 

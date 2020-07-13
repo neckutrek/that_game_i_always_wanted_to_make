@@ -49,6 +49,6 @@ public:
 
 } // namespace tg
 
-#include "core/shader_builder.hpp"
+#include "gfx/shader_builder.hpp"
 
 #endif

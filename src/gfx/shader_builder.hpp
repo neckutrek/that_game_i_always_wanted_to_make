@@ -1,8 +1,9 @@
 #define GL_GLEXT_PROTOTYPES
 #include <SDL_opengl.h>
 
-#include "core/shader_types.h"
 #include "core/exception.h"
+
+#include "gfx/shader_types.h"
 
 namespace tg
 {
