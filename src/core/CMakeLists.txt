@@ -1,1 +1,1 @@
-# do nothing
+add_subdirectory("./test")
