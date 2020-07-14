@@ -2,6 +2,7 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 
+#include "core/clock.h"
 #include "core/object3d.h"
 
 #include "gfx/shader_types.h"
@@ -15,6 +16,9 @@ using namespace tg;
 
 static constexpr int SCREEN_WIDTH = 1024;
 static constexpr int SCREEN_HEIGHT = 768;
+static constexpr int FPS = 30;
+
+static const ClockTime FRAME_DURATION = Clock::ms(1'000/FPS);
 
 auto createSdlWindow()
 {
@@ -50,6 +54,8 @@ int main()
    {
       return -1;
    }
+
+   Clock::now(); // Set the in-game clock to start now
 
    Shader vertexShader = ShaderBuilder::buildShader("../src/shaders/pos_col_tex.vert");
    Shader fragmentShader = ShaderBuilder::buildShader("../src/shaders/tex.frag");
@@ -140,6 +146,7 @@ int main()
    float rotSpeed = 0.10f;
    glm::vec3 rotAxis = {1.0f, 1.0f, 1.0f};
 
+   ClockTime last_tick = Clock::now();
    bool run = true;
    while(run)
    {
@@ -171,7 +178,14 @@ int main()
       }
 
       SDL_GL_SwapWindow( window );
-      SDL_Delay( 1 );
+
+      ClockTime now = Clock::now();
+      ClockTime duration = now - last_tick;
+      if (duration < FRAME_DURATION)
+      {
+         SDL_Delay( Clock::ms(FRAME_DURATION - duration) );
+      }
+      last_tick = now;
    }
 
    glDeleteTextures(1, &texture1);
@@ -180,6 +194,6 @@ int main()
    SDL_GL_DeleteContext( context );
    SDL_DestroyWindow( window );
    SDL_Quit();
-   
+
    return 0;
 }

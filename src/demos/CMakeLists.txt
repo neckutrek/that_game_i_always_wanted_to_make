@@ -3,6 +3,7 @@ set(TARGETS
    3d_boxes)
 
 set(LIBRARIES
+   core
    gfx
    ${SDL2_LIBRARIES})
 

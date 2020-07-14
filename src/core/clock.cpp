@@ -9,12 +9,7 @@ namespace tg
 ClockTime::ClockTime() : sec(0u), usec(0u) {}
 ClockTime::ClockTime(unsigned int sec, unsigned int usec) : sec(sec), usec(usec) {}
 
-bool ClockTime::operator==(const ClockTime& t) const
-{
-   return sec == t.sec && usec == t.usec;
-}
-
-ClockTime ClockTime::operator+(const ClockTime& t) {
+ClockTime ClockTime::operator+(const ClockTime& t) const {
    unsigned int s = sec+t.sec;
    unsigned int u = usec+t.usec;
    unsigned int x = u / 1'000'000;
@@ -23,7 +18,7 @@ ClockTime ClockTime::operator+(const ClockTime& t) {
    return ClockTime(s, u);
 }
 
-ClockTime ClockTime::operator-(const ClockTime& t) {
+ClockTime ClockTime::operator-(const ClockTime& t) const {
    if (t.sec > sec || (t.sec == sec && t.usec >= usec))
    {
       return ClockTime(0u, 0u);
@@ -38,6 +33,36 @@ ClockTime ClockTime::operator-(const ClockTime& t) {
    }
 
    return ClockTime(s, u);
+}
+
+bool ClockTime::operator>(const ClockTime& t) const
+{
+   return sec > t.sec || (sec == t.sec && usec > t.usec);
+}
+
+bool ClockTime::operator>=(const ClockTime& t) const
+{
+   return sec > t.sec || (sec == t.sec && usec >= t.usec);
+}
+
+bool ClockTime::operator<(const ClockTime& t) const
+{
+   return !(*this >= t);
+}
+
+bool ClockTime::operator<=(const ClockTime& t) const
+{
+   return !(*this > t);
+}
+
+bool ClockTime::operator==(const ClockTime& t) const
+{
+   return sec == t.sec && usec == t.usec;
+}
+
+bool ClockTime::operator!=(const ClockTime& t) const
+{
+   return !(*this == t);
 }
 
 namespace Clock
@@ -57,6 +82,17 @@ namespace Clock
       assert(usec < 1'000'000);
 
       return {sec, usec};
+   }
+
+   tg::ClockTime ms(unsigned int ms)
+   {
+      unsigned int s = ms / 1'000;
+      return ClockTime(s, (ms - s * 1'000) * 1'000);
+   }
+
+   unsigned int ms(const tg::ClockTime& t)
+   {
+      return t.sec * 1'000 + t.usec / 1'000;
    }
 }
 
