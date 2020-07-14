@@ -1,3 +1,6 @@
+#ifndef __THATGAME_CORE_OBJECT3D_INCGRD__
+#define __THATGAME_CORE_OBJECT3D_INCGRD__
+
 #include <vector>
 
 #include "glm/glm.hpp"
@@ -45,3 +48,5 @@ public:
 };
 
 } // namespace tg
+
+#endif
