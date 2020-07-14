@@ -39,6 +39,28 @@
            "MIMode": "gdb",
            "miDebuggerPath": "/usr/bin/gdb"
          }
+      },
+
+
+
+
+      {
+         "name": "test_core",
+         "type": "cppdbg",
+         "request": "launch",
+         "program": "${workspaceFolder}/bin/test/test_core",
+         "args": [],
+         "stopAtEntry": false,
+         "cwd": "${workspaceFolder}/bin",
+         "environment": [],
+         "externalConsole": false,
+         "osx": {
+           "MIMode": "lldb",
+         },
+         "linux": {
+           "MIMode": "gdb",
+           "miDebuggerPath": "/usr/bin/gdb"
+         }
       }
    ]
 }
