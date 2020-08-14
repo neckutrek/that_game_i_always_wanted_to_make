@@ -1,49 +1,36 @@
 #ifndef __THATGAME_CORE_OBJECT3D_INCGRD__
 #define __THATGAME_CORE_OBJECT3D_INCGRD__
 
-#include <vector>
+#include "core/object3d_interface.h"
 
 #include "glm/glm.hpp"
-#include "glm/gtx/transform.hpp"
+
+#include <vector>
 
 namespace tg
 {
 
-class Object3D
+class Object3D : public Object3DInterface
 {
-   glm::mat4 m_model_mtx;
-
 public:
-   Object3D()
-   : m_model_mtx(glm::mat4(1.0f))
-   {}
+                           Object3D();
+   virtual                 ~Object3D() = default;
+                           Object3D(const Object3D&) = default;
+                           Object3D(Object3D&&) = default;
+                           Object3D& operator=(const Object3D&) = default;
+                           Object3D& operator=(Object3D&&) = default;
 
-   void setPosition(glm::vec3 pos)
-   {
-      m_model_mtx[3][0] = pos[0];
-      m_model_mtx[3][1] = pos[1];
-      m_model_mtx[3][2] = pos[2];
-   }
+   virtual  void           setPosition(glm::vec3 pos);                           // [world coordinates]
+   virtual  void           translate(glm::vec3 stretch);                         // [world coordinates]
+   virtual  void           rotate(float radians, glm::vec3 rotationAxis);        // [world coordinates]
 
-   void translate(glm::vec3 stretch)
-   {
-      m_model_mtx = glm::translate(m_model_mtx, stretch);
-   }
+   virtual  glm::vec3      getPosition() const;                                  // [world coordinates]
 
-   void rotate(float radians, glm::vec3 rotationAxis)
-   {
-      m_model_mtx = glm::rotate(m_model_mtx, radians, rotationAxis);
-   }
+   virtual  const glm::mat4& mtx() const;
+   virtual  const float*   mtx00() const;
 
-   const glm::mat4& mtx() const
-   {
-      return m_model_mtx;
-   }
-
-   const float* mtx00() const
-   {
-      return &m_model_mtx[0][0];
-   }
+private:
+            glm::mat4      m_model_mtx;
 
 };
 

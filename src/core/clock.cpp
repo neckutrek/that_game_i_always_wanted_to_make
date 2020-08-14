@@ -2,6 +2,7 @@
 
 #include <chrono>
 #include <cassert>
+#include <cmath>
 
 namespace tg
 {
@@ -93,6 +94,21 @@ namespace Clock
    unsigned int ms(const tg::ClockTime& t)
    {
       return t.sec * 1'000 + t.usec / 1'000;
+   }
+
+   tg::ClockTime sec(float sec)
+   {
+      if (sec < 0) return ClockTime(0, 0);
+      float frac, integral;
+      frac = std::modf(sec, &integral);
+      unsigned int s = static_cast<unsigned int>(integral);
+      unsigned int us = static_cast<unsigned int>(frac * 1'000'000.0f);
+      return ClockTime(s, us);
+   }
+
+   float sec(const tg::ClockTime& t)
+   {
+      return static_cast<float>(t.sec) + static_cast<float>(t.usec) / 1'000'000.0f;
    }
 }
 

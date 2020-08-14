@@ -95,7 +95,8 @@ TEST(core__clock, core__clock_now)
    std::this_thread::sleep_for(std::chrono::milliseconds(100));
    ClockTime t2 = Clock::now() - t1;
    EXPECT_EQ(t2.sec, 0u);
-   EXPECT_TRUE(t2.usec > 50'000 && t2.usec < 150'000);
+   EXPECT_GT(t2.usec, 50'000u);
+   EXPECT_LT(t2.usec, 150'000u);
 }
 
 TEST(core__clock, core__clock_ms)
@@ -107,4 +108,9 @@ TEST(core__clock, core__clock_ms)
    EXPECT_EQ( Clock::ms(5u), ClockTime(0u, 5'000u) );
    EXPECT_EQ( Clock::ms(1005u), ClockTime(1u, 5'000u) );
    EXPECT_EQ( Clock::ms(1995u), ClockTime(1u, 995'000u) );
+}
+
+TEST(core__clock, core__clock_sec)
+{
+   EXPECT_EQ( Clock::sec(ClockTime(6u, 5'123u)), 6.005123f );
 }

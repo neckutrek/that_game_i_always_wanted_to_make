@@ -21,7 +21,7 @@ struct ClockTime
             bool           operator>=(const ClockTime& t) const;
             bool           operator<(const ClockTime& t) const;
             bool           operator<=(const ClockTime& t) const;
-            
+
             bool           operator==(const ClockTime& t) const;
             bool           operator!=(const ClockTime& t) const;
 };
@@ -34,6 +34,10 @@ namespace Clock
    // Convert milliseconds to ClockTime
    tg::ClockTime ms(unsigned int ms);
    unsigned int ms(const tg::ClockTime& t);
+
+   // Convert floating-point seconds to ClockTime
+   tg::ClockTime sec(float sec);
+   float sec(const tg::ClockTime& t);
 }
 
 } // namespace tg

@@ -1,5 +1,7 @@
 set(SOURCES
-   clock.cpp)
+   clock.cpp
+   object3d.cpp
+   camera.cpp)
 
 add_library(core ${SOURCES})
 target_include_directories(core PUBLIC ${THIRD_PARTY_INCLUDE_DIR})
